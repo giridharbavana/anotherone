@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kuhu, a second evening out</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--page:#E6ECE6;--sheet:#F1F5F0;--ink:#14302B;--accent:#2E6B4E;--on:#F1F5F0;--grid:rgba(20,48,43,.07);--red:#C8332B}
+@media(prefers-color-scheme:dark){:root{--page:#0B2123;--sheet:#0F2A2B;--ink:#E3EFE8;--accent:#8AD6A8;--on:#0F2A2B;--grid:rgba(227,239,232,.07)}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{background:var(--page)}
+body{margin:0;min-height:100dvh;padding:16px;font:400 17px/1.5 "Bricolage Grotesque",system-ui,sans-serif;color:var(--ink);background:linear-gradient(var(--grid) 1px,transparent 1px) 0 0/24px 24px,linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/24px 24px,var(--page);overflow-x:hidden}
+.sheet{position:relative;overflow:hidden;max-width:640px;margin:0 auto;border:1px solid var(--ink);background:var(--sheet);display:flex;flex-direction:column;min-height:calc(100dvh - 32px)}
+.body{flex:1;padding:24px 20px}
+.lab,.tb,.rows dt{font:400 12px/1.4 "IBM Plex Mono",monospace;text-transform:uppercase;letter-spacing:.06em}
+.lab{margin:0 0 14px;color:var(--accent)}
+h1,h2{font-weight:600;letter-spacing:1px;line-height:1.1;margin:0 0 14px;outline:0}
+h1{font-size:clamp(46px,15vw,76px)}
+h2{font-size:clamp(28px,8vw,38px)}
+p{margin:0 0 14px}
+.q{font-size:22px;font-weight:500;line-height:1.3;margin-top:22px}
+button{font:inherit;color:inherit;cursor:pointer;border-radius:0}
+.btn{min-height:48px;padding:10px 18px;border:1px solid var(--ink);background:transparent}
+.btn.p{background:var(--accent);border-color:var(--accent);color:var(--on)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.grid{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));margin-bottom:20px}
+.opt{min-height:48px;padding:8px 12px;text-align:left;border:1px solid var(--ink);background:transparent}
+.opt[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--on)}
+label.lab{display:block;margin:0 0 8px;color:var(--ink)}
+input[type=text],textarea{width:100%;font:inherit;padding:10px 12px;border:1px solid var(--ink);border-radius:0;background:transparent;color:var(--ink);margin-bottom:20px}
+textarea{resize:vertical}
+.nav{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.arena{position:relative;height:220px;margin-top:20px}
+.arena .btn{position:absolute;max-width:100%;transition:left .25s,top .25s}
+#yes{left:0;top:0;transform-origin:0 0;transition:transform .2s}
+#no{left:0;top:66px}
+.stamp{display:inline-block;border:3px double var(--accent);color:var(--accent);padding:4px 14px;font:500 20px "IBM Plex Mono",monospace;text-transform:uppercase;letter-spacing:.14em;transform:rotate(-6deg);margin:6px 0 20px}
+.rows{display:grid;grid-template-columns:auto 1fr;border-top:1px solid var(--ink);margin:0 0 18px}
+.rows dt,.rows dd{margin:0;padding:9px 0;border-bottom:1px solid var(--ink)}
+.rows dd{padding-left:16px;overflow-wrap:anywhere}
+.msg{white-space:pre-line;border:1px solid var(--ink);padding:12px;margin-bottom:18px}
+.status{min-height:1.5em;font:400 13px "IBM Plex Mono",monospace}
+.tb{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--ink);font-size:11px}
+.tb div{padding:8px 12px;border-bottom:1px solid var(--ink);overflow-wrap:anywhere}
+.tb div:nth-child(odd){border-right:1px solid var(--ink)}
+.tb div:nth-last-child(-n+2){border-bottom:0}
+.tb b{display:block;font-weight:400;opacity:.65}
+.wipe{position:absolute;inset:0;z-index:5;background:var(--accent);color:var(--on);display:grid;place-content:center;justify-items:center;gap:10px}
+.wipe svg{width:96px;height:96px}
+.arc{fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;opacity:0}
+.ov{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:16px;background:rgba(11,33,35,.65)}
+.modal{position:relative;width:100%;max-width:420px;max-height:calc(100dvh - 32px);overflow:auto;background:var(--sheet);border:1px solid var(--ink);padding:22px 20px}
+.modal h2{font-size:30px}
+.x{position:absolute;top:8px;right:8px;width:44px;height:44px;border:1px solid var(--ink);background:transparent;font-size:22px;line-height:1}
+.koel{width:84px;height:auto;color:var(--ink);display:block;margin-bottom:10px}
+.sp{margin:0 0 16px;padding:12px;border:1px solid var(--ink)}
+.sp label{display:flex;gap:10px;align-items:flex-start;padding:4px 0;font-size:15px}
+.sp input{accent-color:var(--accent);width:18px;height:18px;margin-top:3px;flex:none}
+.grid1{display:grid;gap:8px;margin-bottom:20px}
+.opt b{display:block;font-weight:500}
+.opt small{display:block;font:400 12px/1.4 "IBM Plex Mono",monospace;letter-spacing:.02em;opacity:.8;margin-top:2px}
+.opt:disabled{opacity:.4;cursor:not-allowed}
+.rate{margin-bottom:18px}
+.stars{display:flex;gap:4px}
+.star{width:48px;height:48px;border:1px solid var(--ink);background:transparent;font-size:24px;line-height:1;padding:0}
+.star.on{background:var(--accent);border-color:var(--accent);color:var(--on)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<main class="sheet" id="sheet">
+<div class="body">
+
+<section data-s="0">
+<p class="lab">Revision B · Follow-up</p>
+<h1 id="h0" tabindex="-1">Kuhu,</h1>
+<p>I hope you had a good time and enjoyed the conversation as much as I did.</p>
+<p>I’ve been thinking about it since. Before I get ahead of myself, a few quick questions.</p>
+<div class="nav"><button class="btn p" type="button" id="n0">Go on</button></div>
+</section>
+
+<section data-s="1" hidden>
+<p class="lab">Sheet 01 / 02</p>
+<h2 id="h1" tabindex="-1">How did it go?</h2>
+<p>Be honest. It helps me pick better next time.</p>
+<div id="stars"></div>
+<div class="nav"><button class="btn" type="button" data-back>Back</button><button class="btn p" type="button" id="n1" disabled>Next</button></div>
+</section>
+
+<section data-s="2" hidden>
+<p class="lab">Sheet 01 / 02</p>
+<h2 id="h2" tabindex="-1">One more thing</h2>
+<p>I’d like to do it again, if you would. Nothing fixed, and I’ve got a few ideas.</p>
+<p class="q">Would you like to go on a second date with me?</p>
+<div class="arena" id="arena"><button class="btn p" id="yes" type="button">Yes, I’d like that</button><button class="btn" id="no" type="button">Not this time</button></div>
+</section>
+
+<section data-s="3" hidden>
+<p class="lab">Sheet 02 / 02</p>
+<h2 id="h3" tabindex="-1">Here’s what I’ve got</h2>
+<p>Pick up to two that sound good. We can sort out dates later.</p>
+<p class="lab" id="cnt" aria-live="polite">0 of 2 chosen</p>
+<div class="grid1" id="plans" role="group" aria-label="Plans, choose up to two"></div>
+<div id="otherBox" hidden>
+<label class="lab" for="other">What do you have in mind?</label>
+<input type="text" id="other" maxlength="80" autocomplete="off">
+<button class="opt" type="button" id="mine" aria-pressed="false" style="width:100%;margin-bottom:20px"><b>Or I’d like to plan the next date myself</b></button>
+</div>
+<div class="nav"><button class="btn" type="button" data-back>Back</button><button class="btn p" type="button" id="n3" disabled>Review the plan</button></div>
+</section>
+
+<section data-s="4" hidden>
+<div class="stamp" aria-hidden="true">Approved</div>
+<h2 id="h4" tabindex="-1">The plan</h2>
+<dl class="rows" id="rows"></dl>
+<p class="status" id="st4" role="status"></p>
+<div class="nav"><button class="btn p" type="button" id="save">Save reply</button><button class="btn" type="button" id="again">Start over</button><button class="btn" type="button" data-back>Back</button></div>
+</section>
+
+<section data-s="5" hidden>
+<h2 id="h5" tabindex="-1">That’s completely okay</h2>
+<p>Thanks for looking. There’s no pressure at all.</p>
+<label class="lab" for="dmsg">Your reply</label>
+<textarea id="dmsg" rows="5"></textarea>
+<p class="status" id="st5" role="status"></p>
+<div class="nav"><button class="btn p" type="button" id="dsave">Save reply</button><button class="btn" type="button" id="copy">Copy</button><button class="btn" type="button" id="changed">Changed your mind? Go back</button></div>
+</section>
+
+</div>
+<div class="tb">
+<div><b>Project</b>A second evening out, 2 no.</div>
+<div><b>Client</b>Kuhu</div>
+<div><b>Sheet</b><span id="sn">00</span> of 02</div>
+<div><b>Issued</b><span id="iss"></span></div>
+</div>
+<div class="wipe" id="wipe" hidden aria-hidden="true">
+<svg viewBox="0 0 60 60"><circle cx="20" cy="30" r="7" fill="#C8332B"/><path class="arc" d="M29.9 20.1A14 14 0 0 1 29.9 39.9"/><path class="arc" d="M37 13A24 24 0 0 1 37 47"/><path class="arc" d="M44 6A34 34 0 0 1 44 54"/></svg>
+<span class="lab" style="color:inherit;margin:0">Sheet 02 / 02 · Revision B</span>
+</div>
+</main>
+
+<div class="ov" id="ov" hidden>
+<div class="modal" role="dialog" aria-modal="true" aria-labelledby="mh">
+<button class="x" type="button" id="mx" aria-label="Close">×</button>
+<svg class="koel" viewBox="0 0 90 60" aria-hidden="true"><path fill="currentColor" d="M4 52 38 30c4-8 14-12 24-8l20-4-14 10c2 8-4 16-14 18L26 48z"/><path fill="currentColor" d="M62 22 78 14 66 26z"/><circle cx="60" cy="25" r="3" fill="#C8332B"/></svg>
+<h2 id="mh" tabindex="-1">Saved safely</h2>
+<p id="mt"></p>
+<div class="sp" id="sp"><p class="lab" style="margin-bottom:6px">Approved small print</p>
+<label><input type="checkbox"><span>I consent to more shared laughter, including the inconveniently loud kind.</span></label>
+<label><input type="checkbox"><span>I consent to conversations wandering pleasantly off-plan, again.</span></label>
+<label><input type="checkbox"><span>I consent to pickup from my place — still no site inspection required.</span></label></div>
+<button class="btn p" type="button" id="md">Done</button>
+</div>
+</div>
+
+<script>
+(function(){
+"use strict";
+var ACCESS_KEY="4bd06fca-3730-4945-b70e-e9922dc209b6";
+var $=function(s){return document.querySelector(s)},$$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
+var RM=matchMedia("(prefers-reduced-motion: reduce)");
+var DAYS=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],MON=["January","February","March","April","May","June","July","August","September","October","November","December"];
+var TIMES=[["Early morning · 6:30 am","6:30 am"],["Late morning · 10:30 am","10:30 am"],["Afternoon · 4:00 pm","4:00 pm"]];
+var PLANS=[["Early morning walk to Ameenpur lake","Let’s spot some birds, if we’re lucky"],["Road trip to Visakhapatnam","It’s ridiculous, right?"],["Day trip to the District Archaeological Museum in Karimnagar","A day out among the old stuff"],["Golconda visit with a meal and axe throwing","Fort first, then food, then axes"],["Something else","Your own idea, or you plan the next date"]];
+var OTHER="Something else";
+var st={day:null,time:null,tl:"",plans:[],other:"",mine:false,r:{o:0,p:0,f:0}};
+var cur=0,hist=[];
+$("#iss").textContent=new Date().toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
+
+function show(n){
+  $$("section[data-s]").forEach(function(s){s.hidden=+s.dataset.s!==n});
+  cur=n;$("#sn").textContent=["00","01","01","02","02","—"][n];
+  $("#h"+n).focus();
+}
+function go(n){hist.push(cur);show(n)}
+$$("[data-back]").forEach(function(b){b.addEventListener("click",function(){show(hist.pop()||0)})});
+
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1)}
+function lc(s){return s.charAt(0).toLowerCase()+s.slice(1)}
+function list(a){return a.length>1?a.slice(0,-1).join(", ")+" and "+a[a.length-1]:(a[0]||"")}
+function dayLong(d){return DAYS[d.getDay()]+", "+d.getDate()+" "+MON[d.getMonth()]}
+function planNames(){var a=[];st.plans.forEach(function(p){if(p!==OTHER){a.push(p);return}if(st.other.trim())a.push(st.other.trim());if(st.mine)a.push("planning the next date myself")});return a}
+function press(b,v){b.setAttribute("aria-pressed",v?"true":"false")}
+function mk(parent,label,desc,fn){
+  var b=document.createElement("button");b.type="button";b.className="opt";
+  var t=document.createElement("b");t.textContent=label;b.appendChild(t);
+  if(desc){var d=document.createElement("small");d.textContent=desc;b.appendChild(d)}
+  b.setAttribute("aria-pressed","false");b.addEventListener("click",fn);parent.appendChild(b);return b;
+}
+
+/* Greeting */
+$("#n0").addEventListener("click",function(){go(1)});
+
+/* Ratings */
+(function(){
+  var box=$("#stars");
+  [["o","The evening overall"],["p","The place"],["f","The food"]].forEach(function(r){
+    var w=document.createElement("div");w.className="rate";
+    var l=document.createElement("p");l.className="lab";l.style.marginBottom="8px";l.textContent=r[1];
+    var g=document.createElement("div");g.className="stars";g.setAttribute("role","group");g.setAttribute("aria-label",r[1]+", out of 5");
+    var bs=[];
+    for(let i=1;i<=5;i++){
+      var b=document.createElement("button");b.type="button";b.className="star";b.textContent="★";
+      b.setAttribute("aria-label",i+(i>1?" stars":" star"));b.setAttribute("aria-pressed","false");
+      b.addEventListener("click",function(){
+        st.r[r[0]]=i;
+        bs.forEach(function(x,j){x.classList.toggle("on",j<i);press(x,j===i-1)});
+        $("#n1").disabled=!(st.r.o&&st.r.p&&st.r.f);
+      });
+      bs.push(b);g.appendChild(b);
+    }
+    w.appendChild(l);w.appendChild(g);box.appendChild(w);
+  });
+  $("#n1").addEventListener("click",function(){go(2)});
+})();
+
+/* The question: No button */
+var yes=$("#yes"),no=$("#no"),arena=$("#arena");
+var LABELS=["Are you sure?","Really?","Think about it...","Pretty please?","Okay, fine. No."];
+var dodges=0,lastD=0;
+function hit(a,b,m){return !(a.r+m<b.left||a.l-m>b.right||a.b+m<b.top||a.t-m>b.bottom)}
+function dodge(px,py){
+  dodges++;no.textContent=LABELS[dodges-1];
+  yes.style.transform="scale("+Math.pow(1.06,dodges)+")";
+  var box=arena.getBoundingClientRect(),n=no.getBoundingClientRect(),y=yes.getBoundingClientRect(),w=n.width,h=n.height,best=null;
+  for(var i=0;i<60&&!best;i++){
+    var x=Math.random()*Math.max(0,box.width-w),t=Math.random()*Math.max(0,box.height-h);
+    var r={l:box.left+x,t:box.top+t,r:box.left+x+w,b:box.top+t+h};
+    if(hit(r,y,10))continue;
+    if(px!=null&&px>r.l-28&&px<r.r+28&&py>r.t-28&&py<r.b+28)continue;
+    if(Math.abs(r.l-n.left)<40&&Math.abs(r.t-n.top)<40)continue;
+    best={x:x,t:t};
+  }
+  if(!best)best={x:Math.max(0,box.width-w),t:Math.max(0,box.height-h)};
+  no.style.left=best.x+"px";no.style.top=best.t+"px";
+}
+function tryDodge(e){
+  if(RM.matches||dodges>=5)return false;
+  dodge(e.clientX,e.clientY);lastD=Date.now();return true;
+}
+no.addEventListener("pointerenter",function(e){if(e.pointerType==="mouse")tryDodge(e)});
+no.addEventListener("pointerdown",function(e){if(e.pointerType!=="mouse")tryDodge(e)});
+no.addEventListener("click",function(){
+  if(Date.now()-lastD<500)return;
+  if(!RM.matches&&dodges<5){dodge(null);lastD=Date.now();return}
+  declineInit();go(5);
+});
+function resetNo(){dodges=0;no.textContent="Not this time";no.style.left="0px";no.style.top="66px";yes.style.transform="none"}
+
+/* Yes transition */
+function wait(ms){return new Promise(function(r){setTimeout(r,ms)})}
+async function wipeTo(n){
+  if(RM.matches||!Element.prototype.animate){go(n);return}
+  var p=$("#wipe"),arcs=$$("#wipe .arc"),ease="cubic-bezier(.7,0,.3,1)";
+  arcs.forEach(function(a){a.style.opacity=0});p.hidden=false;
+  await p.animate([{transform:"translateX(-100%)"},{transform:"translateX(0)"}],{duration:450,easing:ease,fill:"forwards"}).finished;
+  for(var i=0;i<arcs.length;i++){arcs[i].style.opacity=1;await wait(220)}
+  await wait(200);go(n);
+  await p.animate([{transform:"translateX(0)"},{transform:"translateX(100%)"}],{duration:450,easing:ease,fill:"forwards"}).finished;
+  p.hidden=true;
+}
+yes.addEventListener("click",function(){wipeTo(3)});
+
+/* Plans */
+(function(){
+  var g=$("#plans"),bs=[],cnt=$("#cnt");
+  function sync(){
+    var o=st.plans.indexOf(OTHER)>-1,full=st.plans.length>=2;
+    $("#otherBox").hidden=!o;
+    bs.forEach(function(b,i){b.disabled=full&&st.plans.indexOf(PLANS[i][0])<0});
+    cnt.textContent=st.plans.length+" of 2 chosen";
+    $("#n3").disabled=!st.plans.length||(o&&!st.mine&&!st.other.trim());
+  }
+  PLANS.forEach(function(p){
+    var b=mk(g,p[0],p[1],function(){
+      var i=st.plans.indexOf(p[0]);
+      if(i>-1)st.plans.splice(i,1);else if(st.plans.length<2)st.plans.push(p[0]);
+      press(b,st.plans.indexOf(p[0])>-1);sync();
+      if(p[0]===OTHER&&i<0)$("#other").focus();
+    });bs.push(b);
+  });
+  var mine=$("#mine");
+  mine.addEventListener("click",function(){st.mine=!st.mine;press(mine,st.mine);sync()});
+  $("#other").addEventListener("input",function(e){st.other=e.target.value;sync()});
+  $("#n3").addEventListener("click",function(){buildApproved();go(4)});
+})();
+
+/* Approved */
+function message(){
+  return "Hi Giridhar, it’s Kuhu. Quick feedback: "+st.r.o+"/5 overall, "+st.r.p+"/5 for the place and "+st.r.f+"/5 for the food. Yes, I’d love a second date. I’m up for "+list(planNames().map(lc))+".\nShall we sort the details?";
+}
+function buildApproved(){
+  var rows=$("#rows");rows.textContent="";
+  [["Plan",cap(list(planNames().map(lc)))],["Table","For two"]].forEach(function(r){
+    var a=document.createElement("dt"),b=document.createElement("dd");
+    a.textContent=r[0];b.textContent=r[1];rows.appendChild(a);rows.appendChild(b);
+  });
+  $("#st4").textContent="";
+}
+$("#again").addEventListener("click",function(){location.reload()});
+
+/* Saving */
+function ratings(){return{rating_overall:st.r.o,rating_place:st.r.p,rating_food:st.r.f}}
+async function send(payload,statusEl,btn,kind){
+  Object.assign(payload,ratings());
+  var no=kind==="no";
+  var body={access_key:ACCESS_KEY,subject:(no?"Declined":"Confirmed")+": second date reply from Kuhu",from_name:"Kuhu",
+    status:no?"Declined":"Confirmed",plan:payload.cuisine||"",rating_overall:payload.rating_overall||"",rating_place:payload.rating_place||"",rating_food:payload.rating_food||"",
+    message:payload.message,sent_at:payload.timestamp};
+  statusEl.textContent="Saving…";btn.disabled=true;
+  try{
+    var r=await fetch("https://api.web3forms.com/submit",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(body)});
+    var j=await r.json();
+    if(!r.ok||!j.success)throw new Error("failed");
+    statusEl.textContent="";openModal(kind,btn);
+  }catch(e){statusEl.textContent="That didn’t save. Please try again in a moment."}
+  btn.disabled=false;
+}
+$("#save").addEventListener("click",function(){
+  send({kind:"second_date_confirmed",timestamp:new Date().toISOString(),day:"",time:"",table_name:"For two",venue:"",area:"",
+    cuisine:list(planNames()),food:"",allergies:"",message:message()},$("#st4"),$("#save"),"ok");
+});
+
+/* Decline */
+function declineInit(){$("#dmsg").value="Hi Giridhar, it’s Kuhu. Thank you for asking, that was kind. I’d rather not go on a second date, but I hope we’re still good."}
+$("#dsave").addEventListener("click",function(){
+  send({kind:"second_date_declined",timestamp:new Date().toISOString(),day:"",time:"",table_name:"",venue:"",area:"",cuisine:"",food:"",allergies:"",message:$("#dmsg").value},$("#st5"),$("#dsave"),"no");
+});
+$("#copy").addEventListener("click",async function(){
+  try{await navigator.clipboard.writeText($("#dmsg").value);$("#st5").textContent="Copied."}
+  catch(e){$("#st5").textContent="Couldn’t copy. Select the text and copy it manually."}
+});
+$("#changed").addEventListener("click",function(){hist=[0,1];resetNo();show(2)});
+
+/* Modal */
+var ov=$("#ov"),lastFocus=null;
+function openModal(kind,from){
+  lastFocus=from||document.activeElement;
+  $("#mt").textContent=kind==="no"?"Your reply has been passed on. Thank you for letting Giridhar know.":"Giridhar will follow up with the details now that your reply has been submitted.";
+  $("#sp").hidden=kind==="no";
+  ov.hidden=false;$("#mh").focus();
+}
+function closeModal(){ov.hidden=true;if(lastFocus&&lastFocus.focus)lastFocus.focus()}
+$("#md").addEventListener("click",closeModal);$("#mx").addEventListener("click",closeModal);
+ov.addEventListener("click",function(e){if(e.target===ov)closeModal()});
+document.addEventListener("keydown",function(e){
+  if(ov.hidden)return;
+  if(e.key==="Escape"){closeModal();return}
+  if(e.key==="Tab"){
+    var f=$$(".modal button, .modal input").filter(function(x){return x.offsetParent});
+    if(!f.length)return;var a=f[0],z=f[f.length-1];
+    if(e.shiftKey&&(document.activeElement===a||document.activeElement===$("#mh"))){e.preventDefault();z.focus()}
+    else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus()}
+  }
+});
+})();
+</script>
+</body>
+</html>
