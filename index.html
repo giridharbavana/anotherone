@@ -65,6 +65,13 @@ textarea{resize:vertical}
 .opt b{display:block;font-weight:500}
 .opt small{display:block;font:400 12px/1.4 "IBM Plex Mono",monospace;letter-spacing:.02em;opacity:.8;margin-top:2px}
 .opt:disabled{opacity:.4;cursor:not-allowed}
+.stack{position:relative;height:300px;margin:0 0 22px}
+.ph{position:absolute;top:var(--y);left:var(--x);width:62%;height:250px;padding:6px 6px 0;border:1px solid var(--ink);background:var(--sheet);transform:rotate(var(--r));z-index:var(--z);transition:transform .25s,opacity .25s,border-color .25s;display:flex;flex-direction:column;text-align:left}
+.ph:not([data-ok]){display:none}
+.ph img{width:100%;flex:1;min-height:0;object-fit:cover;display:block}
+.ph .cap{font:400 11px/1 "IBM Plex Mono",monospace;text-transform:uppercase;letter-spacing:.06em;padding:8px 0}
+.stack.on .ph{opacity:.55}
+.ph.sel{z-index:10;opacity:1!important;transform:rotate(0) translateY(-10px) scale(1.04);border-color:var(--accent);outline:2px solid var(--accent)}
 .rate{margin-bottom:18px}
 .stars{display:flex;gap:4px}
 .star{width:48px;height:48px;border:1px solid var(--ink);background:transparent;font-size:24px;line-height:1;padding:0}
@@ -81,6 +88,7 @@ textarea{resize:vertical}
 <h1 id="h0" tabindex="-1">Kuhu,</h1>
 <p>I hope you had a good time and enjoyed the conversation as much as I did.</p>
 <p>I’ve been thinking about it since. Before I get ahead of myself, a few quick questions.</p>
+<div id="gal" hidden><p class="lab">Exhibits</p><div class="stack" id="stack" role="group" aria-label="Photos from the first date"></div></div>
 <div class="nav"><button class="btn p" type="button" id="n0">Go on</button></div>
 </section>
 
@@ -336,6 +344,40 @@ $("#copy").addEventListener("click",async function(){
   catch(e){$("#st5").textContent="Couldn’t copy. Select the text and copy it manually."}
 });
 $("#changed").addEventListener("click",function(){hist=[0,1];resetNo();show(2)});
+
+/* Photo stack (max 4) */
+var PHOTOS=[["data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjRjNFNkM0Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjQ0ZFM0QwIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9InVybCgjZykiLz48Y2lyY2xlIGN4PSIyODAiIGN5PSIxMTUiIHI9IjM0IiBmaWxsPSIjRjhGMkRDIi8+PHBhdGggZD0iTTAgMTYwIEw2MCAxMzAgTDEzMCAxNTUgTDIwMCAxMjUgTDI3MCAxNTggTDM0MCAxMzIgTDQwMCAxNTYgVjE4NSBIMFoiIGZpbGw9IiM4REI5QTAiLz48cmVjdCB5PSIxNzAiIHdpZHRoPSI0MDAiIGhlaWdodD0iMTMwIiBmaWxsPSIjMkU2QjRFIi8+PGcgc3Ryb2tlPSIjQ0ZFM0QwIiBzdHJva2Utd2lkdGg9IjIiIG9wYWNpdHk9Ii41NSI+PHBhdGggZD0iTTYwIDIwMGg5ME0xODAgMjIwaDEyME05MCAyNDVoNzBNMjQwIDE5MGgxMDBNMjkwIDI1NWg4MCIvPjwvZz48cGF0aCBkPSJNMjUwIDE5MGg2MCIgc3Ryb2tlPSIjRjhGMkRDIiBzdHJva2Utd2lkdGg9IjMiIG9wYWNpdHk9Ii42Ii8+PGcgZmlsbD0iIzE0MzAyQiI+PHBhdGggZD0iTTAgMTcwIEwzMCAxMDUgTDYwIDE3MFoiLz48cGF0aCBkPSJNNDAgMTcwIEw3NSA5MCBMMTEwIDE3MFoiLz48L2c+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMTQzMDJCIiBzdHJva2Utd2lkdGg9IjIiPjxwYXRoIGQ9Ik0xMzAgNzBsOCA2IDgtNk0xNzAgNDhsNyA1IDctNU0yMDUgODJsNiA1IDYtNSIvPjwvZz48L3N2Zz4=","Photo from our first date"],["data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiNEQ0U5REQiLz48Y2lyY2xlIGN4PSI5MCIgY3k9IjcwIiByPSIyOCIgZmlsbD0iI0YzRTZDNCIvPjxwYXRoIGQ9Ik0wIDE2NSBMNzAgMTIwIEwxNTAgMTYwIEwyMzAgMTEwIEwzMjAgMTU4IEw0MDAgMTI1IFYxNzUgSDBaIiBmaWxsPSIjOERCOUEwIi8+PHJlY3QgeT0iMTcwIiB3aWR0aD0iNDAwIiBoZWlnaHQ9IjEzMCIgZmlsbD0iIzRFODQ2NiIvPjxwYXRoIGQ9Ik0xNzUgMTcwIEwyMjUgMTcwIEwzNzAgMzAwIEwzMCAzMDBaIiBmaWxsPSIjMTQzMDJCIi8+PGcgZmlsbD0iI0YzRTZDNCI+PHBhdGggZD0iTTE5OCAxODBoNGwyIDE0aC04eiIvPjxwYXRoIGQ9Ik0xOTQgMjA1aDEybDMgMjJoLTE4eiIvPjxwYXRoIGQ9Ik0xODggMjQwaDI0bDYgMzRoLTM2eiIvPjwvZz48L3N2Zz4=","Photo from our first date"],["data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiNFOEUyQ0MiLz48cmVjdCB5PSIyMzAiIHdpZHRoPSI0MDAiIGhlaWdodD0iNzAiIGZpbGw9IiM5REI4QTMiLz48ZyBmaWxsPSIjQzlCRTlBIiBzdHJva2U9IiMxNDMwMkIiIHN0cm9rZS13aWR0aD0iMiI+PHBhdGggZD0iTTQwIDIzMFYxMjBhNTAgNTAgMCAwIDEgMTAwIDBWMjMweiIvPjxwYXRoIGQ9Ik0xNTAgMjMwVjEyMGE1MCA1MCAwIDAgMSAxMDAgMFYyMzB6Ii8+PHBhdGggZD0iTTI2MCAyMzBWMTIwYTUwIDUwIDAgMCAxIDEwMCAwVjIzMHoiLz48L2c+PGcgZmlsbD0iIzJFNkI0RSI+PHBhdGggZD0iTTYwIDIzMFYxMjVhMzAgMzAgMCAwIDEgNjAgMFYyMzB6Ii8+PHBhdGggZD0iTTE3MCAyMzBWMTI1YTMwIDMwIDAgMCAxIDYwIDBWMjMweiIvPjxwYXRoIGQ9Ik0yODAgMjMwVjEyNWEzMCAzMCAwIDAgMSA2MCAwVjIzMHoiLz48L2c+PHJlY3QgeD0iMzAiIHk9IjIyNiIgd2lkdGg9IjM0MCIgaGVpZ2h0PSI4IiBmaWxsPSIjMTQzMDJCIi8+PGNpcmNsZSBjeD0iMzUwIiBjeT0iNTAiIHI9IjIyIiBmaWxsPSIjRjhGMkRDIi8+PC9zdmc+","Photo from our first date"],["data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjRjZFOEI4Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjQjlEOEMyIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9InVybCgjZykiLz48Y2lyY2xlIGN4PSIxMTAiIGN5PSIxMDUiIHI9IjM2IiBmaWxsPSIjRkJGNEQ4Ii8+PHBhdGggZD0iTTAgMjE1IFExMDAgMTg1IDIwMCAyMDUgVDQwMCAxOTUgVjMwMCBIMFoiIGZpbGw9IiMyRTZCNEUiLz48ZyBmaWxsPSIjMTQzMDJCIj48cGF0aCBkPSJNMTcwIDIxNVYxNTBoMjB2LTE0aDEydjE0aDE2di0xNGgxMnYxNGgxNnYtMTRoMTJ2MTRoMjB2NjV6Ii8+PHBhdGggZD0iTTEzMCAyMTVWMTc1aDE4di0xMGgxMHYxMGgxMnY0MHoiLz48cGF0aCBkPSJNMjg1IDIxNVYxNzBoMTZ2LTEwaDEwdjEwaDE0djQ1eiIvPjwvZz48cGF0aCBkPSJNMjIyIDIxNXYtMjRhMTAgMTAgMCAwIDEgMjAgMHYyNHoiIGZpbGw9IiNGM0U2QzQiLz48ZyBmaWxsPSJub25lIiBzdHJva2U9IiMxNDMwMkIiIHN0cm9rZS13aWR0aD0iMiI+PHBhdGggZD0iTTMwMCA3MGw4IDYgOC02TTMzNSA1Mmw3IDUgNy01Ii8+PC9nPjwvc3ZnPg==","Photo from our first date"]].slice(0,4);
+(function(){
+  var stack=$("#stack"),gal=$("#gal"),all=[],cards=[],pinned=-1;
+  var YS=[0,26,8,32],RS=[-3,2,-1.5,3];
+  function mark(sel){cards.forEach(function(c,i){c.classList.toggle("sel",i===sel);press(c,i===pinned)});stack.classList.toggle("on",sel>-1)}
+  function layout(){
+    cards=all.filter(function(c){return c.hasAttribute("data-ok")});
+    var n=cards.length;gal.hidden=!n;pinned=-1;
+    cards.forEach(function(c,i){
+      c.style.setProperty("--x",(n>1?i*38/(n-1):19)+"%");
+      c.style.setProperty("--y",YS[i]+"px");
+      c.style.setProperty("--r",RS[i]+"deg");
+      c.style.setProperty("--z",i+1);
+      c.querySelector(".cap").textContent="Fig. 0"+(i+1);
+    });
+    mark(-1);
+  }
+  PHOTOS.forEach(function(p){
+    var b=document.createElement("button");b.type="button";b.className="ph";b.setAttribute("aria-pressed","false");
+    var im=document.createElement("img"),cap=document.createElement("span");cap.className="cap";
+    im.alt=p[1];
+    im.addEventListener("load",function(){b.setAttribute("data-ok","1");layout()});
+    im.addEventListener("error",function(){b.remove();all.splice(all.indexOf(b),1);layout()});
+    b.addEventListener("pointerenter",function(e){if(e.pointerType==="mouse")mark(cards.indexOf(b))});
+    b.addEventListener("pointerleave",function(e){if(e.pointerType==="mouse")mark(pinned)});
+    b.addEventListener("focus",function(){mark(cards.indexOf(b))});
+    b.addEventListener("blur",function(){mark(pinned)});
+    b.addEventListener("click",function(){var i=cards.indexOf(b);pinned=pinned===i?-1:i;mark(pinned)});
+    b.appendChild(im);b.appendChild(cap);all.push(b);stack.appendChild(b);
+    im.src=p[0];
+  });
+})();
 
 /* Modal */
 var ov=$("#ov"),lastFocus=null;
